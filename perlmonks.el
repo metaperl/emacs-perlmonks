@@ -1,4 +1,4 @@
-;;; pastebin.el --- A simple interface to www.perlmonks.org
+;;; perlmonks.el --- A simple interface to www.perlmonks.org
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
 ;;; Acknowledgements: jlf in #emacs
@@ -65,7 +65,7 @@
     The buffer contains the raw HTTP response sent by the server."
       (switch-to-buffer (current-buffer)))
 
-; # emacs
+; irc.freenode.net, #emacs
 ; [14:08] <jlf> er,  (interactive "sString1:\nsString2:") or somesuch
 
 (defun perlmonks-login (username password)
