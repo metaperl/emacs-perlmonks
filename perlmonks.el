@@ -113,7 +113,7 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
   (interactive "sReply URL? ")
   (let ((msg-text (buffer-substring (point-min) (point-max)))
 	(parent-node (progn
-		       (string-match "parent=\\([:digit:]+\\)" reply-url)
+		       (string-match "parent=\\([0-9]+\\)" reply-url)
 		       (match-string 1 reply-url))))
     (message parent-node)))
 
