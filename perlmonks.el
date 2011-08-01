@@ -1,7 +1,7 @@
 ;;; perlmonks.el --- A simple interface to www.perlmonks.org
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
-;;; Acknowledgements: jlf in #emacs
+;;; Acknowledgements: In #emacs: jlf, ashawley
 
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -96,6 +96,59 @@ sPassword: ")
 		   ("perlquestion_doctext" .	,msg-text)
 		   ("op" .	"create"))
 		 )))
+
+(defun perlmonks-reply (reply-url)
+  "Post current buffer as a reply to a node on perlmonks.org, given NODE-URL which is the url resulting from clicking on 'Reply' or 'Comment'. E.g.
+
+If you visited this node:
+http://perlmonks.org/index.pl?node_id=357506
+
+and clicked on 'Comment', you would be at the following REPLY-URL:
+http://perlmonks.org/index.pl?parent=357506;node_id=3333
+
+whereas if you had clicked on the 'Reply' below the first comment, you would have this
+REPLY-URL:
+http://perlmonks.org/index.pl?parent=357638;node_id=3333
+"
+  (interactive "sReply URL? ")
+  (let ((msg-text (buffer-substring (point-min) (point-max)))
+	(parent-node (progn
+		       (string-match "parent=\\([[:digit:]]+\\)" reply-url)
+		       (match-string 0 reply-url))))
+    (message parent-node)))
+
+(defun ignore ()
+    (epm-http-post "http://www.perlmonks.org"
+		 `(
+		   ("node_id"	. "3333")
+		   ("note_parent_node" . "afasdf"
+		   ("type"	. "note")
+		   ("node" . 	,node-title)
+		   ("op" .	"create"))
+		 )))
+
+
+(defun perlmonks-meditation (node-title)
+  "Post current buffer to Meditations on perlmonks.org with NODE-TITLE"
+  (interactive "sNode title? ")
+  (let ((msg-text (buffer-substring (point-min) (point-max))))
+    (epm-http-post "http://www.perlmonks.org"
+		 `(
+		   ("node_id"	. "480")
+		   ("type"	. "perlmeditation")
+		   ("node" . 	,node-title)
+		   ("perlmeditation_doctext" .	,msg-text)
+		   ("op" .	"create"))
+		 )))
+
+(defun perlmonks-blockquote-region ()
+   (interactive)
+   (kill-region (point) (mark))
+   (insert "\n<blockquote><i>\n    ")
+   (yank)
+   (insert "\n</i></blockquote>\n\n")
+ )
+
 
 (defun perlmonks-blockquote ()
    (interactive)
