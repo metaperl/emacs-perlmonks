@@ -30,8 +30,10 @@
 ;;;
 ;;; to edit a buffer for submission to Perlmonks
 
+(require 'menu-bar)
 
 ;;; Code:
+
 
 ;;;###autoload
 (defgroup perlmonks nil
@@ -39,6 +41,11 @@
   :tag "Perlmonks"
   :group 'tools)
 
+(defun metaperl/clipboard-as-string ()
+  (with-temp-buffer
+    (clipboard-yank)
+    (buffer-string)))
+    
 
 (defun epm-http-post (url args)
   (interactive)
@@ -97,8 +104,8 @@ sPassword: ")
 		   ("op" .	"create"))
 		 )))
 
-(defun perlmonks-reply (reply-url)
-  "Post current buffer as a reply to a node on perlmonks.org, given NODE-URL which is the url resulting from clicking on 'Reply' or 'Comment'. E.g.
+(defun perlmonks-reply (node-title)
+  "Post current buffer as a reply with NODE-TITLEto a node on perlmonks.org. The reply url must exist in the clipboard when this command is called. A reply url is the url resulting from clicking on 'Reply' or 'Comment'. E.g.
 
 If you visited this node:
 http://perlmonks.org/index.pl?node_id=357506
@@ -110,21 +117,21 @@ whereas if you had clicked on the 'Reply' below the first comment, you would hav
 REPLY-URL:
 http://perlmonks.org/index.pl?parent=357638;node_id=3333
 "
-  (interactive "sReply URL? ")
-  (let ((msg-text (buffer-substring (point-min) (point-max)))
-	(parent-node (progn
-		       (string-match "parent=\\([0-9]+\\)" reply-url)
-		       (match-string 1 reply-url))))
-    (message parent-node)))
+  (interactive "sNode title? ")
 
-(defun ignore ()
+  (let* ((msg-text (buffer-substring (point-min) (point-max)))
+	 (reply-url (current-kill 0))
+	 (parent-node (progn
+			(string-match "parent=\\([0-9]+\\)" reply-url)
+			(match-string 1 reply-url))))
     (epm-http-post "http://www.perlmonks.org"
-		 `(
-		   ("node_id"	. "3333")
-		   ("note_parent_node" . "afasdf"
-		   ("type"	. "note")
-		   ("node" . 	,node-title)
-		   ("op" .	"create"))
+		   `(
+		     ("node_id"	. "3333")
+		     ("note_parent_node" . ,parent-node)
+		     ("type"	. "note")
+		     ("node" . 	,node-title)
+		     ("note_doctext" .	,msg-text)
+		     ("op" .	"create"))
 		 )))
 
 
