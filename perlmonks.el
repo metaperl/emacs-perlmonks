@@ -1,7 +1,7 @@
 ;;; perlmonks.el --- A simple interface to www.perlmonks.org
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
-;;; Acknowledgements: In #emacs: jlf, ashawley
+;;; Acknowledgements: In #emacs: jlf, ashawley, cgroza
 
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -26,11 +26,14 @@
 ;;;
 ;;; to setup a url-cookie so that you can then:
 ;;;
-;;;  M-x perlmonks-sopw
+;;;  M-x perlmonks-seekers-of-perl-wisdom
+;;;  M-x perlmonks-meditation
 ;;;
 ;;; to edit a buffer for submission to Perlmonks
 
 (require 'menu-bar)
+
+(add-to-list 'auto-mode-alist '("\\.pmonks\\'" . nxml-mode))
 
 ;;; Code:
 
@@ -91,7 +94,7 @@ sPassword: ")
 		   (".cgifields" .	"expires"))
 		 ))
 
-(defun perlmonks-sopw (node-title)
+(defun perlmonks-seekers-of-perl-wisdom (node-title)
   "Post current buffer to Seekers of Perl Wisdom on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
   (let ((msg-text (buffer-substring (point-min) (point-max))))
@@ -104,8 +107,35 @@ sPassword: ")
 		   ("op" .	"create"))
 		 )))
 
-(defun perlmonks-reply (node-title)
-  "Post current buffer as a reply with NODE-TITLEto a node on perlmonks.org. The reply url must exist in the clipboard when this command is called. A reply url is the url resulting from clicking on 'Reply' or 'Comment'. E.g.
+(defun perlmonks-paragraph ()
+  "Insert <p> tags"
+  (interactive)
+  (insert "
+<P>
+
+
+
+</P>
+
+")
+  (previous-line 4)
+  (insert "   "))
+
+(defun perlmonks-code ()
+  "Insert <p> tags"
+  (interactive)
+  (insert "
+<CODE>
+</CODE>
+
+")
+  (previous-line 1)
+  (open-line 1)
+)
+
+
+(defun perlmonks-reply (node-title reply-url)
+  "Post current buffer as a reply to a node on perlmonks.org. NODE-TITLE will be the title. The REPLY-URL is the url resulting from clicking on 'Reply' or 'Comment'. E.g.
 
 If you visited this node:
 http://perlmonks.org/index.pl?node_id=357506
@@ -117,10 +147,10 @@ whereas if you had clicked on the 'Reply' below the first comment, you would hav
 REPLY-URL:
 http://perlmonks.org/index.pl?parent=357638;node_id=3333
 "
-  (interactive "sNode title? ")
+  (interactive "sNode title? \nReply url?")
 
   (let* ((msg-text (buffer-substring (point-min) (point-max)))
-	 (reply-url (current-kill 0))
+;	 (reply-url (current-kill 0))
 	 (parent-node (progn
 			(string-match "parent=\\([0-9]+\\)" reply-url)
 			(match-string 1 reply-url))))
@@ -138,6 +168,7 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 (defun perlmonks-meditation (node-title)
   "Post current buffer to Meditations on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
+  (save-buffer nil)
   (let ((msg-text (buffer-substring (point-min) (point-max))))
     (epm-http-post "http://www.perlmonks.org"
 		 `(
