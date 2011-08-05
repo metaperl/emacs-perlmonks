@@ -20,14 +20,24 @@
 
 ;;; Commentary:
 ;;;
-;;; Load this file and then:
-;;;
-;;;   M-x perlmonks-login
-;;;
-;;; to setup a url-cookie so that you can then:
+;;; Create a file named perlmonks-auth.el like so:
+
+; (setq perlmonks-username "some-monk")
+; (setq perlmonks-password "some-pass")
+
+; (provide 'perlmonks-auth)
+
+;;; and make sure it is on your load-path somewhere
+
+;;; Then evaluate *this* file and then use the editing and posting commands
+;;; perlmonks-paragraph
+;;; perlmonks-code
+;;; perlmonks-blockquote
+
 ;;;
 ;;;  M-x perlmonks-seekers-of-perl-wisdom
 ;;;  M-x perlmonks-meditation
+;;;  M-x perlmonks-reply
 ;;;
 ;;; to edit a buffer for submission to Perlmonks
 
@@ -36,6 +46,8 @@
 (add-to-list 'auto-mode-alist '("\\.pmonks\\'" . nxml-mode))
 
 ;;; Code:
+
+(require 'perlmonks-auth)
 
 
 ;;;###autoload
@@ -78,34 +90,21 @@
 ; irc.freenode.net, #emacs
 ; [14:08] <jlf> er,  (interactive "sString1:\nsString2:") or somesuch
 
-(defun perlmonks-login (username password)
-  "Login to perlmonks.org with USERNAME and PASSWORD and setting a cookie which will
-expire in 10 years."
-  (interactive "sUsername: 
-sPassword: ")
+
+(defun perlmonks-login ()
+  "Login to perlmonks.org with username and password and hopefully setting a cookie which will
+expire in 10 years... It doesnt always seem to work"
+  (interactive)
   (epm-http-post "http://www.perlmonks.org"
 		 `(
 		   ("node_id"	. "109")
 		   ("op"	. "login")
-		   ("user" . 	,username)
-		   ("passwd" .	,password)
+		   ("user" . 	,perlmonks-username)
+		   ("passwd" .	,perlmonks-password)
 		   ("expires"	. "+10y")
 		   ("sexisgood"	. "submit")
 		   (".cgifields" .	"expires"))
 		 ))
-
-(defun perlmonks-seekers-of-perl-wisdom (node-title)
-  "Post current buffer to Seekers of Perl Wisdom on perlmonks.org with NODE-TITLE"
-  (interactive "sNode title? ")
-  (let ((msg-text (buffer-substring (point-min) (point-max))))
-    (epm-http-post "http://www.perlmonks.org"
-		 `(
-		   ("node_id"	. "479")
-		   ("type"	. "perlquestion")
-		   ("node" . 	,node-title)
-		   ("perlquestion_doctext" .	,msg-text)
-		   ("op" .	"create"))
-		 )))
 
 (defun perlmonks-paragraph ()
   "Insert <p> tags"
@@ -125,11 +124,12 @@ sPassword: ")
   "Insert <p> tags"
   (interactive)
   (insert "
+
 <CODE>
 </CODE>
 
 ")
-  (previous-line 1)
+  (previous-line 2)
   (open-line 1)
 )
 
@@ -147,7 +147,9 @@ whereas if you had clicked on the 'Reply' below the first comment, you would hav
 REPLY-URL:
 http://perlmonks.org/index.pl?parent=357638;node_id=3333
 "
-  (interactive "sNode title? \nReply url?")
+  (interactive "sNode title? \nsReply url? ")
+  (save-some-buffers nil)
+  (perlmonks-login)
 
   (let* ((msg-text (buffer-substring (point-min) (point-max)))
 ;	 (reply-url (current-kill 0))
@@ -165,10 +167,27 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 		 )))
 
 
+(defun perlmonks-seekers-of-perl-wisdom (node-title)
+  "Post current buffer to Seekers of Perl Wisdom on perlmonks.org with NODE-TITLE"
+  (interactive "sNode title? ")
+  (save-some-buffers nil)
+  (perlmonks-login)
+  (let ((msg-text (buffer-substring (point-min) (point-max))))
+    (epm-http-post "http://www.perlmonks.org"
+		 `(
+		   ("node_id"	. "479")
+		   ("type"	. "perlquestion")
+		   ("node" . 	,node-title)
+		   ("perlquestion_doctext" .	,msg-text)
+		   ("op" .	"create"))
+		 )))
+
+
 (defun perlmonks-meditation (node-title)
   "Post current buffer to Meditations on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
   (save-buffer nil)
+  (perlmonks-login)
   (let ((msg-text (buffer-substring (point-min) (point-max))))
     (epm-http-post "http://www.perlmonks.org"
 		 `(
@@ -179,12 +198,15 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 		   ("op" .	"create"))
 		 )))
 
-(defun perlmonks-blockquote-region ()
-   (interactive)
-   (kill-region (point) (mark))
-   (insert "\n<blockquote><i>\n    ")
-   (yank)
-   (insert "\n</i></blockquote>\n\n")
+(defun perlmonks-blockquote (text)
+   (interactive "sText to quote")
+   (insert "
+<blockquote><i>
+
+
+</i></blockquote>
+
+")
  )
 
 
