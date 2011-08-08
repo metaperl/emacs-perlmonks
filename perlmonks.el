@@ -186,7 +186,7 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 (defun perlmonks-meditation (node-title)
   "Post current buffer to Meditations on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
-  (save-buffer nil)
+  (save-some-buffers nil)
   (perlmonks-login)
   (let ((msg-text (buffer-substring (point-min) (point-max))))
     (epm-http-post "http://www.perlmonks.org"
