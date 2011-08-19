@@ -49,7 +49,8 @@
 ;;; Code:
 
 (require 'url)
-(setq url-cookie-trusted-urls ".*perlmonks.org.*")
+;(add-to-list 'url-cookie-trusted-urls ".*perlmonks.org.*")
+(setq url-cookie-trusted-urls '(".*perlmonks.*"))
 
 (require 'perlmonks-auth)
 
@@ -222,6 +223,12 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
    (yank)
    (insert "\n</i></blockquote>\n\n")
  )
+
+(defun check-cookies ()
+  (interactive)
+  (dired url-cookie-file)
+)
+
 
 (provide 'perlmonks)
 ;;; pastebin.el ends here
