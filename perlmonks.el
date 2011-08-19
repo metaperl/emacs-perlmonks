@@ -45,9 +45,15 @@
 
 (add-to-list 'auto-mode-alist '("\\.monks\\'" . nxml-mode))
 
+
 ;;; Code:
 
+(require 'url)
+(setq url-cookie-trusted-urls ".*perlmonks.org.*")
+
 (require 'perlmonks-auth)
+
+
 
 
 ;;;###autoload
