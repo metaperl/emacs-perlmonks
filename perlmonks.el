@@ -43,7 +43,7 @@
 
 (require 'menu-bar)
 
-(add-to-list 'auto-mode-alist '("\\.pmonks\\'" . nxml-mode))
+(add-to-list 'auto-mode-alist '("\\.monks\\'" . nxml-mode))
 
 ;;; Code:
 
@@ -171,7 +171,6 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
   "Post current buffer to Seekers of Perl Wisdom on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
   (save-some-buffers nil)
-  (perlmonks-login)
   (let ((msg-text (buffer-substring (point-min) (point-max))))
     (epm-http-post "http://www.perlmonks.org"
 		 `(
