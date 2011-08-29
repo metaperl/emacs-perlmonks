@@ -1,7 +1,9 @@
 ;;; perlmonks.el --- A simple interface to www.perlmonks.org
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
-;;; Acknowledgements: In #emacs: jlf, ashawley, cgroza, bpalmer
+;;; Acknowledgements: 
+;;; - In #emacs: jlf, ashawley, cgroza, bpalmer, ivan-kanis
+;;; - For emacs: rms
 
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -45,10 +47,15 @@
 
 (add-to-list 'auto-mode-alist '("\\.monks\\'" . nxml-mode))
 
+(setq debug-on-error t)
 
 ;;; Code:
 
 (require 'url)
+
+; http://opensource.hld.ca/trac.cgi/browser/trunk/config/emacs/.elisp/w3/url-cookie.el?rev=80
+(defun url-cookie-p (obj)
+  (and (vectorp obj) (= (length obj) 7) (eq (aref obj 0) 'cookie)))
 
 ;(add-to-list 'url-cookie-trusted-urls ".*perlmonks.org.*")
 (setq url-cookie-trusted-urls '(".*perlmonks.*"))
