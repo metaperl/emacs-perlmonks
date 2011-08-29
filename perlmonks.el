@@ -1,7 +1,7 @@
 ;;; perlmonks.el --- A simple interface to www.perlmonks.org
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
-;;; Acknowledgements: In #emacs: jlf, ashawley, cgroza
+;;; Acknowledgements: In #emacs: jlf, ashawley, cgroza, bpalmer
 
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
 ;;; Code:
 
 (require 'url)
+
 ;(add-to-list 'url-cookie-trusted-urls ".*perlmonks.org.*")
 (setq url-cookie-trusted-urls '(".*perlmonks.*"))
 
@@ -111,7 +112,9 @@ expire in 10 years... It doesnt always seem to work"
 		   ("expires"	. "+10y")
 		   ("sexisgood"	. "submit")
 		   (".cgifields" .	"expires"))
-		 ))
+		 )
+  (url-cookie-write-file)
+  )
 
 (defun perlmonks-paragraph ()
   "Insert <p> tags"
@@ -156,8 +159,6 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 "
   (interactive "sNode title? \nsReply url? ")
   (save-some-buffers nil)
-  (perlmonks-login)
-
   (let* ((msg-text (buffer-substring (point-min) (point-max)))
 ;	 (reply-url (current-kill 0))
 	 (parent-node (progn
@@ -193,7 +194,6 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
   "Post current buffer to Meditations on perlmonks.org with NODE-TITLE"
   (interactive "sNode title? ")
   (save-some-buffers nil)
-  (perlmonks-login)
   (let ((msg-text (buffer-substring (point-min) (point-max))))
     (epm-http-post "http://www.perlmonks.org"
 		 `(
