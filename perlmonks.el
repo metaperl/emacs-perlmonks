@@ -3,6 +3,7 @@
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
 ;;; Acknowledgements: 
 ;;; - In #emacs: jlf, ashawley, cgroza, bpalmer, ivan-kanis, legumbre
+;;; - perlmonks: MidLifeXis, Voronich
 ;;; - For emacs: rms
 
 ;;; This program is free software; you can redistribute it and/or modify
@@ -151,7 +152,7 @@ expire in 10 years."
   (insert "   "))
 
 (defun perlmonks-code ()
-  "Insert <p> tags"
+  "Insert <code> tags"
   (interactive)
   (insert "
 
