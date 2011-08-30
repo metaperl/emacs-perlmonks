@@ -2,7 +2,7 @@
 
 ;;; Copyright (C) (range 2011 'forever) by Terrence Brannon <metaperl@gmail.com>
 ;;; Acknowledgements: 
-;;; - In #emacs: jlf, ashawley, cgroza, bpalmer, ivan-kanis
+;;; - In #emacs: jlf, ashawley, cgroza, bpalmer, ivan-kanis, legumbre
 ;;; - For emacs: rms
 
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,27 +21,37 @@
 ;;; Boston, MA  02110-1301  USA
 
 ;;; Commentary:
-;;;
-;;; Create a file named perlmonks-auth.el like so:
 
-; (setq perlmonks-username "some-monk")
-; (setq perlmonks-password "some-pass")
+;;; Usage
 
-; (provide 'perlmonks-auth)
+;;; * Installation
+;;; Download perlmonks.el from https://github.com/metaperl/emacs-perlmonks
+;;; Put this file somewhere on your load-path and in your .emacs put:
+;;; (require 'perlmonks)
 
-;;; and make sure it is on your load-path somewhere
+;;; * Authentication
+;;; The first time you use this mode, you need to call perlmonks-login
+;;; which will set a cookie which will last for 10 years
 
-;;; Then evaluate *this* file and then use the editing and posting commands
+;;; * Editing
+;;; You initiate your use of this mode by opening up a file with a .monks 
+;;; extension. This will open the file with major mode nxml and minor mode 
+;;; perlmonks. From that point, you simply write a post using
+;;; Perl Monks Approved HTML tags - http://perlmonks.org/index.pl?node_id=29281
+;;; There are some convenience functions within perlmonks.el for editing:
+;;; ** Editing Support
 ;;; perlmonks-paragraph
 ;;; perlmonks-code
 ;;; perlmonks-blockquote
 
-;;;
+;;; * Posting
+;;; Once your post is complete, perlmonks.el has support for posting to the
+;;; following areas:
 ;;;  M-x perlmonks-seekers-of-perl-wisdom
 ;;;  M-x perlmonks-meditation
 ;;;  M-x perlmonks-reply
-;;;
-;;; to edit a buffer for submission to Perlmonks
+;;; Just call one of those commands while in your .monks buffer
+
 
 (require 'menu-bar)
 
@@ -56,6 +66,8 @@
 ; http://opensource.hld.ca/trac.cgi/browser/trunk/config/emacs/.elisp/w3/url-cookie.el?rev=80
 (defun url-cookie-p (obj)
   (and (vectorp obj) (= (length obj) 7) (eq (aref obj 0) 'cookie)))
+; another fix has to do with fixing the defstruct url-cookie in url-cookie.el
+; similar to this patch http://lists.gnu.org/archive/html/bug-gnu-emacs/2011-05/msg00624.html
 
 ;(add-to-list 'url-cookie-trusted-urls ".*perlmonks.org.*")
 (setq url-cookie-trusted-urls '(".*perlmonks.*"))
@@ -106,16 +118,17 @@
 ; [14:08] <jlf> er,  (interactive "sString1:\nsString2:") or somesuch
 
 
-(defun perlmonks-login ()
-  "Login to perlmonks.org with username and password and hopefully setting a cookie which will
-expire in 10 years... It doesnt always seem to work"
+(defun perlmonks-login (username password)
+  "Login to perlmonks.org with USERNAME and PASSWORD and set a cookie which will
+expire in 10 years."
+  (interactive "sUsername? \nsPassword? ")
   (interactive)
   (epm-http-post "http://www.perlmonks.org"
 		 `(
 		   ("node_id"	. "109")
 		   ("op"	. "login")
-		   ("user" . 	,perlmonks-username)
-		   ("passwd" .	,perlmonks-password)
+		   ("user" . 	,username)
+		   ("passwd" .	,password)
 		   ("expires"	. "+10y")
 		   ("sexisgood"	. "submit")
 		   (".cgifields" .	"expires"))
@@ -238,4 +251,4 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 
 
 (provide 'perlmonks)
-;;; pastebin.el ends here
+
