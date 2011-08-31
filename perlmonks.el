@@ -53,6 +53,9 @@
 ;;;  M-x perlmonks-reply
 ;;; Just call one of those commands while in your .monks buffer
 
+;;; * Screencasts
+;;; - perlmonks-reply
+;;; http://www.youtube.com/watch?v=fjzfDdKaCoc
 
 (require 'menu-bar)
 
@@ -225,16 +228,6 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 		   ("op" .	"create"))
 		 )))
 
-(defun perlmonks-blockquote (text)
-   (interactive "sText to quote")
-   (insert "
-<blockquote><i>
-
-
-</i></blockquote>
-
-")
- )
 
 
 (defun perlmonks-blockquote ()
