@@ -140,6 +140,23 @@ expire in 10 years."
   (url-cookie-write-file)
   )
 
+(defun perlmonks-blockquote ()
+   (interactive)
+   (kill-region (point) (mark))
+   (insert "\n<blockquote><i>\n    ")
+   (yank)
+   (insert "\n</i></blockquote>\n\n")
+ )
+
+(defun perlmonks-code ()
+   (interactive)
+   (kill-region (point) (mark))
+   (insert "<CODE>")
+   (yank)
+   (insert "</CODE> ")
+ )
+
+
 (defun perlmonks-paragraph ()
   "Insert <p> tags"
   (interactive)
@@ -154,18 +171,6 @@ expire in 10 years."
   (previous-line 4)
   (insert "   "))
 
-(defun perlmonks-code ()
-  "Insert <code> tags"
-  (interactive)
-  (insert "
-
-<CODE>
-</CODE>
-
-")
-  (previous-line 2)
-  (open-line 1)
-)
 
 
 (defun perlmonks-reply (node-title reply-url)
@@ -230,13 +235,6 @@ http://perlmonks.org/index.pl?parent=357638;node_id=3333
 
 
 
-(defun perlmonks-blockquote ()
-   (interactive)
-   (kill-region (point) (mark))
-   (insert "\n<blockquote><i>\n    ")
-   (yank)
-   (insert "\n</i></blockquote>\n\n")
- )
 
 (defun check-cookies ()
   (interactive)
