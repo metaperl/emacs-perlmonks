@@ -76,11 +76,6 @@
 ;(add-to-list 'url-cookie-trusted-urls ".*perlmonks.org.*")
 (setq url-cookie-trusted-urls '(".*perlmonks.*"))
 
-(require 'perlmonks-auth)
-
-
-
-
 ;;;###autoload
 (defgroup perlmonks nil
   "Perlmonks -- perlmonks.org client"
